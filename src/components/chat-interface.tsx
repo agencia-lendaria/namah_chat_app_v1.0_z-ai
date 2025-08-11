@@ -17,7 +17,7 @@ import {
   Edit3,
   Check,
   Trash2,
-  Palette
+  RotateCcw
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -160,7 +160,7 @@ export function ChatInterface({
               className="w-full"
               variant="outline"
             >
-              <Palette className="h-4 w-4 mr-2" />
+              <RotateCcw className="h-4 w-4 mr-2" />
               Novo Tema
             </Button>
           </div>
