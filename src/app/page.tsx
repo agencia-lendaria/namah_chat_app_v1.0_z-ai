@@ -23,6 +23,7 @@ export default function Home() {
     renameConversation,
     switchToConversation
   } = useChatStore()
+  const isTyping = useChatStore(state => state.isTyping)
 
   const handleThemeSelect = async (theme: string) => {
     try {
