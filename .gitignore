@@ -47,3 +47,23 @@ test
 prompt
 
 server.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+
+# ANOTHER
+PLANNER.md
+nul

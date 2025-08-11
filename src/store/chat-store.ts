@@ -17,50 +17,91 @@ interface Conversation {
 interface ChatState {
   // Estado atual
   currentConversation: Conversation | null
+  currentTheme: string | null
   messages: Message[]
   conversations: Conversation[]
+  conversationMessages: Record<string, Message[]> // Mensagens por conversa
   isTyping: boolean
   
   // Ações
   setCurrentConversation: (conversation: Conversation) => void
+  setCurrentTheme: (theme: string) => void
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void
   setMessages: (messages: Message[]) => void
   addConversation: (conversation: Conversation) => void
   setTyping: (isTyping: boolean) => void
   clearCurrentConversation: () => void
   generateUserId: () => string
+  renameConversation: (conversationId: string, newSubject: string) => void
+  switchToConversation: (conversationId: string) => void
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
   // Estado inicial
   currentConversation: null,
+  currentTheme: null,
   messages: [],
   conversations: [],
+  conversationMessages: {},
   isTyping: false,
 
   // Ações
   setCurrentConversation: (conversation) => {
-    set({ currentConversation: conversation, messages: [] })
+    const state = get()
+    const conversationMessages = state.conversationMessages[conversation.id] || []
+    set({ 
+      currentConversation: conversation, 
+      currentTheme: conversation.subject,
+      messages: conversationMessages
+    })
+  },
+
+  setCurrentTheme: (theme) => {
+    set({ currentTheme: theme })
   },
 
   addMessage: (message) => {
+    const state = get()
     const newMessage: Message = {
       ...message,
       id: Date.now().toString(),
       timestamp: new Date()
     }
-    set((state) => ({
-      messages: [...state.messages, newMessage]
-    }))
+    
+    const updatedMessages = [...state.messages, newMessage]
+    const updatedConversationMessages = { ...state.conversationMessages }
+    
+    if (state.currentConversation) {
+      updatedConversationMessages[state.currentConversation.id] = updatedMessages
+    }
+    
+    set({
+      messages: updatedMessages,
+      conversationMessages: updatedConversationMessages
+    })
   },
 
   setMessages: (messages) => {
-    set({ messages })
+    const state = get()
+    const updatedConversationMessages = { ...state.conversationMessages }
+    
+    if (state.currentConversation) {
+      updatedConversationMessages[state.currentConversation.id] = messages
+    }
+    
+    set({ 
+      messages,
+      conversationMessages: updatedConversationMessages
+    })
   },
 
   addConversation: (conversation) => {
     set((state) => ({
-      conversations: [conversation, ...state.conversations]
+      conversations: [conversation, ...state.conversations],
+      conversationMessages: {
+        ...state.conversationMessages,
+        [conversation.id]: []
+      }
     }))
   },
 
@@ -74,5 +115,28 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   generateUserId: () => {
     return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  },
+
+  renameConversation: (conversationId, newSubject) => {
+    set((state) => ({
+      conversations: state.conversations.map(conv =>
+        conv.id === conversationId ? { ...conv, subject: newSubject } : conv
+      ),
+      currentConversation: state.currentConversation?.id === conversationId
+        ? { ...state.currentConversation, subject: newSubject }
+        : state.currentConversation
+    }))
+  },
+
+  switchToConversation: (conversationId) => {
+    const state = get()
+    const conversation = state.conversations.find(conv => conv.id === conversationId)
+    if (conversation) {
+      const conversationMessages = state.conversationMessages[conversationId] || []
+      set({
+        currentConversation: conversation,
+        messages: conversationMessages
+      })
+    }
   }
 }))

@@ -10,13 +10,18 @@ export default function Home() {
   const [currentView, setCurrentView] = useState<'theme' | 'chat'>('theme')
   const { 
     currentConversation, 
+    currentTheme,
     messages, 
+    conversations,
     setCurrentConversation, 
+    setCurrentTheme,
     addMessage, 
     addConversation,
     setTyping,
     clearCurrentConversation,
-    generateUserId
+    generateUserId,
+    renameConversation,
+    switchToConversation
   } = useChatStore()
 
   const handleThemeSelect = async (theme: string) => {
@@ -43,7 +48,8 @@ export default function Home() {
         user_id: data.userId
       }
 
-      // Adicionar conversa ao store
+      // Definir tema atual e adicionar conversa ao store
+      setCurrentTheme(theme)
       addConversation(conversation)
       setCurrentConversation(conversation)
 
@@ -115,9 +121,35 @@ export default function Home() {
     }
   }
 
-  const handleNewConversation = () => {
+  const handleNewConversation = async () => {
+    // Criar nova conversa no tema atual
+    if (!currentTheme) {
+      toast({
+        title: "Erro",
+        description: "Nenhum tema selecionado.",
+        variant: "destructive"
+      })
+      return
+    }
+    
+    try {
+      await handleThemeSelect(currentTheme)
+    } catch (error) {
+      console.error('Error creating new conversation:', error)
+    }
+  }
+
+  const handleNewTheme = () => {
     clearCurrentConversation()
     setCurrentView('theme')
+  }
+
+  const handleSwitchConversation = (conversationId: string) => {
+    switchToConversation(conversationId)
+  }
+
+  const handleRenameConversation = (conversationId: string, newSubject: string) => {
+    renameConversation(conversationId, newSubject)
   }
 
   return (
@@ -126,12 +158,16 @@ export default function Home() {
         <ThemeSelector onThemeSelect={handleThemeSelect} />
       )}
       
-      {currentView === 'chat' && currentConversation && (
+      {currentView === 'chat' && (
         <ChatInterface
           conversation={currentConversation}
           messages={messages}
+          conversations={conversations}
           onSendMessage={handleSendMessage}
           onNewConversation={handleNewConversation}
+          onNewTheme={handleNewTheme}
+          onSwitchConversation={handleSwitchConversation}
+          onRenameConversation={handleRenameConversation}
           isTyping={useChatStore.getState().isTyping}
         />
       )}
