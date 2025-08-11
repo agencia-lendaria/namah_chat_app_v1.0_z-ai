@@ -18,6 +18,7 @@ export default function Home() {
     clearCurrentConversation,
     generateUserId
   } = useChatStore()
+  const isTyping = useChatStore(state => state.isTyping)
 
   const handleThemeSelect = async (theme: string) => {
     try {
@@ -132,7 +133,7 @@ export default function Home() {
           messages={messages}
           onSendMessage={handleSendMessage}
           onNewConversation={handleNewConversation}
-          isTyping={useChatStore.getState().isTyping}
+          isTyping={isTyping}
         />
       )}
     </div>
