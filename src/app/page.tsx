@@ -6,13 +6,7 @@ import { ChatInterface } from '@/components/chat-interface'
 import { useChatStore } from '@/store/chat-store'
 import { toast } from '@/hooks/use-toast'
 
-export default function Home({ 
-  searchParams, 
-  params 
-}: { 
-  searchParams?: { [key: string]: string | string[] | undefined }
-  params?: { slug: string[] } 
-}) {
+export default function Home() {
   const [currentView, setCurrentView] = useState<'theme' | 'chat'>('theme')
   const { 
     currentConversation, 
