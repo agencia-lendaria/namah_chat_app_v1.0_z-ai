@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { 
@@ -17,9 +18,13 @@ import {
   Edit3,
   Check,
   Trash2,
-  RotateCcw
+  RotateCcw,
+  Sun,
+  Moon
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useChatStore } from "@/store/chat-store"
+import { useTheme } from "@/hooks/use-theme"
 
 interface Message {
   id: string
@@ -64,6 +69,11 @@ export function ChatInterface({
   const [editingConversation, setEditingConversation] = useState<string | null>(null)
   const [editingSubject, setEditingSubject] = useState("")
   const scrollRef = useRef<HTMLDivElement>(null)
+  
+  const isDarkMode = useChatStore((state) => state.isDarkMode)
+  const toggleDarkMode = useChatStore((state) => state.toggleDarkMode)
+  
+  useTheme()
 
   const handleSendMessage = () => {
     if (inputMessage.trim()) {
@@ -263,20 +273,31 @@ export function ChatInterface({
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className="border-b p-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsSidebarOpen(true)}
+                className="lg:hidden"
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+              <div>
+                <h1 className="text-xl font-semibold">
+                  {conversation ? `Conversa sobre ${formatSubject(conversation.subject)}` : "Selecione uma conversa"}
+                </h1>
+              </div>
+            </div>
+            
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden"
+              onClick={toggleDarkMode}
+              className="h-8 w-8"
             >
-              <Menu className="h-4 w-4" />
+              {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
-            <div>
-              <h1 className="text-xl font-semibold">
-                {conversation ? `Conversa sobre ${formatSubject(conversation.subject)}` : "Selecione uma conversa"}
-              </h1>
-            </div>
           </div>
         </div>
 
@@ -340,17 +361,18 @@ export function ChatInterface({
 
         {/* Input Area */}
         <div className="border-t p-4">
-          <div className="flex items-center gap-2 max-w-4xl mx-auto">
+          <div className="flex items-end gap-2 max-w-4xl mx-auto">
             <div className="flex-1 relative">
-              <Input
+              <Textarea
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder={conversation ? "Digite sua mensagem..." : "Selecione uma conversa para enviar mensagens"}
-                className="pr-24"
+                className="pr-24 min-h-[80px] resize-none"
                 disabled={!conversation}
+                rows={3}
               />
-              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+              <div className="absolute right-2 bottom-2 flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="icon"

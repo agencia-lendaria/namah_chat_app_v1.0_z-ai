@@ -2,7 +2,9 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Heart, Brain, TrendingUp, Users } from "lucide-react"
+import { Heart, Brain, TrendingUp, Users, Sun, Moon } from "lucide-react"
+import { useChatStore } from "@/store/chat-store"
+import { useTheme } from "@/hooks/use-theme"
 
 interface ThemeSelectorProps {
   onThemeSelect: (theme: string) => void
@@ -40,8 +42,22 @@ const themes = [
 ]
 
 export function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
+  const isDarkMode = useChatStore((state) => state.isDarkMode)
+  const toggleDarkMode = useChatStore((state) => state.toggleDarkMode)
+  
+  useTheme()
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-8 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen gap-8 p-4 relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleDarkMode}
+        className="absolute top-4 right-4 h-8 w-8"
+      >
+        {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      </Button>
+      
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-2">Como posso te ajudar hoje?</h1>
         <p className="text-lg text-muted-foreground">Selecione um tema para começar a conversar</p>

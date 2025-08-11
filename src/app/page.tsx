@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ThemeSelector } from '@/components/theme-selector'
 import { ChatInterface } from '@/components/chat-interface'
+import { ThemeInitializer } from '@/components/theme-initializer'
 import { useChatStore } from '@/store/chat-store'
 import { toast } from '@/hooks/use-toast'
 
@@ -155,6 +156,8 @@ export default function Home() {
 
   return (
     <div className="h-screen">
+      <ThemeInitializer />
+      
       {currentView === 'theme' && (
         <ThemeSelector onThemeSelect={handleThemeSelect} />
       )}
@@ -169,7 +172,7 @@ export default function Home() {
           onNewTheme={handleNewTheme}
           onSwitchConversation={handleSwitchConversation}
           onRenameConversation={handleRenameConversation}
-          isTyping={useChatStore.getState().isTyping}
+          isTyping={isTyping}
         />
       )}
     </div>

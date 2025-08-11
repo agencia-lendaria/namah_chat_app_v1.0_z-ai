@@ -22,6 +22,7 @@ interface ChatState {
   conversations: Conversation[]
   conversationMessages: Record<string, Message[]> // Mensagens por conversa
   isTyping: boolean
+  isDarkMode: boolean
   
   // Ações
   setCurrentConversation: (conversation: Conversation) => void
@@ -30,6 +31,7 @@ interface ChatState {
   setMessages: (messages: Message[]) => void
   addConversation: (conversation: Conversation) => void
   setTyping: (isTyping: boolean) => void
+  toggleDarkMode: () => void
   clearCurrentConversation: () => void
   generateUserId: () => string
   renameConversation: (conversationId: string, newSubject: string) => void
@@ -44,6 +46,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   conversations: [],
   conversationMessages: {},
   isTyping: false,
+  isDarkMode: false, // Será inicializado no cliente
 
   // Ações
   setCurrentConversation: (conversation) => {
@@ -107,6 +110,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   setTyping: (isTyping) => {
     set({ isTyping })
+  },
+
+  toggleDarkMode: () => {
+    set((state) => {
+      const newDarkMode = !state.isDarkMode
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('darkMode', newDarkMode.toString())
+        if (newDarkMode) {
+          document.documentElement.classList.add('dark')
+        } else {
+          document.documentElement.classList.remove('dark')
+        }
+      }
+      return { isDarkMode: newDarkMode }
+    })
   },
 
   clearCurrentConversation: () => {
