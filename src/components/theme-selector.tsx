@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Heart, Brain, TrendingUp, Users, Sun, Moon } from "lucide-react"
 import { useChatStore } from "@/store/chat-store"
 import { useTheme } from "@/hooks/use-theme"
+import Image from "next/image"
 
 interface ThemeSelectorProps {
   onThemeSelect: (theme: string) => void
@@ -59,6 +60,15 @@ export function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
       </Button>
       
       <div className="text-center mb-8">
+        <div className="mb-6">
+          <Image 
+            src="/carol-rache-logo.svg" 
+            alt="Carol Rache Logo" 
+            width={194}
+            height={50}
+            className="mx-auto"
+          />
+        </div>
         <h1 className="text-4xl font-bold mb-2">Como posso te ajudar hoje?</h1>
         <p className="text-lg text-muted-foreground">Selecione um tema para começar a conversar</p>
       </div>
