@@ -66,7 +66,7 @@ export function ThemeSelector({ onThemeSelect }: ThemeSelectorProps) {
             alt="Carol Rache Logo" 
             width={194}
             height={50}
-            className="mx-auto"
+            className="mx-auto dark:invert"
           />
         </div>
         <h1 className="text-4xl font-bold mb-2">Como posso te ajudar hoje?</h1>
